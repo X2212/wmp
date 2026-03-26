@@ -209,4 +209,4 @@ Define your data structures in a proto file, implement a handler function, wire 
 
 ---
 
-**Start building at [github.com/koala73/worldmonitor](https://github.com/koala73/worldmonitor). 22 services, 92 proto files, and a global intelligence dataset waiting for your application.**
+**Start building at [worldmonitor.app](https://www.worldmonitor.app). 22 services, 92 proto files, and a global intelligence dataset waiting for your application.**

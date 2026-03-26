@@ -23,7 +23,6 @@ const KEYRING_SERVICE: &str = "world-monitor";
 const LOCAL_API_LOG_FILE: &str = "local-api.log";
 const DESKTOP_LOG_FILE: &str = "desktop.log";
 const MENU_FILE_SETTINGS_ID: &str = "file.settings";
-const MENU_HELP_GITHUB_ID: &str = "help.github";
 #[cfg(feature = "devtools")]
 const MENU_HELP_DEVTOOLS_ID: &str = "help.devtools";
 const TRUSTED_WINDOWS: [&str; 3] = ["main", "settings", "live-channels"];
@@ -780,15 +779,6 @@ fn build_app_menu(handle: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
     };
     let about_item =
         PredefinedMenuItem::about(handle, Some("About World Monitor"), Some(about_metadata))?;
-    let github_item = MenuItem::with_id(
-        handle,
-        MENU_HELP_GITHUB_ID,
-        "GitHub Repository",
-        true,
-        None::<&str>,
-    )?;
-    let help_separator = PredefinedMenuItem::separator(handle)?;
-
     #[cfg(feature = "devtools")]
     let help_menu = {
         let devtools_item = MenuItem::with_id(
@@ -802,17 +792,12 @@ fn build_app_menu(handle: &AppHandle) -> tauri::Result<Menu<tauri::Wry>> {
             handle,
             "Help",
             true,
-            &[&about_item, &help_separator, &github_item, &devtools_item],
+            &[&about_item, &devtools_item],
         )?
     };
 
     #[cfg(not(feature = "devtools"))]
-    let help_menu = Submenu::with_items(
-        handle,
-        "Help",
-        true,
-        &[&about_item, &help_separator, &github_item],
-    )?;
+    let help_menu = Submenu::with_items(handle, "Help", true, &[&about_item])?;
 
     let edit_menu = {
         let undo = PredefinedMenuItem::undo(handle, None)?;
@@ -840,9 +825,6 @@ fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
                 append_desktop_log(app, "ERROR", &format!("settings menu failed: {err}"));
                 eprintln!("[tauri] settings menu failed: {err}");
             }
-        }
-        MENU_HELP_GITHUB_ID => {
-            let _ = open_in_shell("https://github.com/koala73/worldmonitor");
         }
         #[cfg(feature = "devtools")]
         MENU_HELP_DEVTOOLS_ID => {
