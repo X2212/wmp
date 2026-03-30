@@ -1,6 +1,8 @@
 import type { StoryData } from './story-data';
 import { toFlagEmoji } from '@/utils/country-flag';
 import { getCanonicalApiOrigin } from '@/services/runtime';
+import { SITE_VARIANT } from '@/config/variant';
+import { VARIANT_META } from '@/config/variant-meta';
 
 const VALID_STORY_TYPES = ['ciianalysis', 'convergence', 'brief'] as const;
 type StoryType = typeof VALID_STORY_TYPES[number];
@@ -103,13 +105,14 @@ export const shareTexts = {
 
 // Pre-generated share URLs
 export function getShareUrls(data: StoryData): Record<string, string> {
+  const meta = VARIANT_META[SITE_VARIANT] ?? VARIANT_META.full;
   const url = generateStoryDeepLink(data.countryCode, 'ciianalysis', data.cii?.score, data.cii?.level);
   const text = encodeURIComponent(shareTexts.twitter(data));
   
   return {
     twitter: `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(url)}`,
     linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`,
-    reddit: `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(`${data.countryName} Intelligence Brief - World Monitor`)}`,
+    reddit: `https://reddit.com/submit?url=${encodeURIComponent(url)}&title=${encodeURIComponent(`${data.countryName} Intelligence Brief - ${meta.siteName}`)}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
     whatsapp: `https://wa.me/?text=${encodeURIComponent(shareTexts.whatsapp(data))}`,
     telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareTexts.telegram(data))}`,

@@ -10,6 +10,7 @@ import { loadFromStorage, saveToStorage } from '@/utils';
 import { t } from '@/services/i18n';
 import { escapeHtml } from '@/utils/sanitize';
 import { isDesktopRuntime } from '@/services/runtime';
+import { VARIANT_META } from '@/config/variant-meta';
 
 function getLocalizedPanelName(panelKey: string, fallback: string): string {
   if (panelKey === 'runtime-config') {
@@ -26,7 +27,8 @@ export function initSettingsWindow(): void {
   if (!appEl) return;
 
   // This window shows only "which panels to display" (panel display settings).
-  document.title = `${t('header.settings')} - World Monitor`;
+  const meta = VARIANT_META[SITE_VARIANT] ?? VARIANT_META.full;
+  document.title = `${t('header.settings')} - ${meta.siteName}`;
 
   const panelSettings = loadFromStorage<Record<string, PanelConfig>>(
     STORAGE_KEYS.panels,
