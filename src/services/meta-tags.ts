@@ -20,7 +20,7 @@ const BASE_URL = (() => {
   return variantMeta.url.replace(/\/$/, '');
 })();
 const API_ORIGIN = getCanonicalApiOrigin();
-const DEFAULT_IMAGE = `${BASE_URL}/favico/${SITE_VARIANT === 'full' ? '' : SITE_VARIANT + '/'}og-image.png`;
+const DEFAULT_IMAGE = `${BASE_URL}/favico/${SITE_VARIANT === 'full' ? '' : SITE_VARIANT + '/'}commohedge-og.png`;
 
 export function updateMetaTagsForStory(meta: StoryMeta): void {
   const { countryCode, countryName, ciiScore, ciiLevel, trend, type } = meta;
