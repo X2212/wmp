@@ -31,7 +31,10 @@ function normalizeLevel(rawLevel) {
 }
 
 export default function handler(req, res) {
-  const url = new URL(req.url, 'https://worldmonitor.app');
+  const proto = String(req.headers['x-forwarded-proto'] || 'https').split(',')[0].trim() || 'https';
+  const host = String(req.headers['x-forwarded-host'] || req.headers.host || 'commohedge-monitor.vercel.app').split(',')[0].trim();
+  const baseHost = host;
+  const url = new URL(req.url, `${proto}://${host}`);
   const countryCode = (url.searchParams.get('c') || '').toUpperCase();
   const type = url.searchParams.get('t') || 'ciianalysis';
   const score = url.searchParams.get('s');
@@ -82,9 +85,9 @@ export default function handler(req, res) {
     ${Array.from({length: 16}, (_, i) => `<line x1="0" y1="${i*40}" x2="1200" y2="${i*40}" stroke="#fff" stroke-width="1"/>`).join('\n    ')}
   </g>
 
-  <!-- WORLDMONITOR brand -->
+  <!-- COMMOHEDGE brand -->
   <text x="60" y="56" font-family="system-ui, -apple-system, sans-serif" font-size="18" font-weight="700" fill="${levelColor}" letter-spacing="6"
-    >WORLDMONITOR</text>
+    >COMMOHEDGE</text>
 
   <!-- Status pill -->
   <rect x="290" y="38" width="${levelLabel.length * 9 + 24}" height="26" rx="13" fill="${levelColor}" opacity="0.15"/>
@@ -203,10 +206,10 @@ export default function handler(req, res) {
   <!-- Logo area -->
   <circle cx="92" cy="545" r="24" fill="none" stroke="${levelColor}" stroke-width="2"/>
   <text x="92" y="551" font-family="system-ui, sans-serif" font-size="18" font-weight="800" fill="${levelColor}" text-anchor="middle"
-    >W</text>
+    >C</text>
 
   <text x="130" y="538" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#ddd" letter-spacing="3"
-    >WORLDMONITOR</text>
+    >COMMOHEDGE</text>
   <text x="130" y="562" font-family="system-ui, sans-serif" font-size="15" fill="#777"
     >Real-time global intelligence monitoring</text>
 
@@ -217,11 +220,12 @@ export default function handler(req, res) {
 
   <!-- URL + date -->
   <text x="60" y="610" font-family="system-ui, sans-serif" font-size="14" fill="#555"
-    >worldmonitor.app · ${dateStr} · Free &amp; open source</text>
+    >${escapeXml(baseHost)} · ${dateStr} · Free &amp; open source</text>
 </svg>`;
 
   res.setHeader('Content-Type', 'image/svg+xml');
-  res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=3600, stale-while-revalidate=600');
+  // Keep short to reduce social-preview staleness when branding changes.
+  res.setHeader('Cache-Control', 'public, max-age=300, s-maxage=300, stale-while-revalidate=60');
   res.status(200).send(svg);
 }
 
