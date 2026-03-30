@@ -1,4 +1,5 @@
 import { SITE_VARIANT } from '@/config/variant';
+import { IS_OFFICIAL_WORLDMONITOR_HOST } from '@/config/variant';
 import { VARIANT_META } from '@/config/variant-meta';
 import { getCanonicalApiOrigin } from '@/services/runtime';
 
@@ -12,7 +13,12 @@ interface StoryMeta {
 }
 
 const variantMeta = VARIANT_META[SITE_VARIANT] ?? VARIANT_META.full;
-const BASE_URL = variantMeta.url.replace(/\/$/, '');
+const BASE_URL = (() => {
+  if (typeof window === 'undefined') return variantMeta.url.replace(/\/$/, '');
+  // For forks / previews / custom domains, avoid pointing OG tags at worldmonitor.app.
+  if (!IS_OFFICIAL_WORLDMONITOR_HOST) return window.location.origin;
+  return variantMeta.url.replace(/\/$/, '');
+})();
 const API_ORIGIN = getCanonicalApiOrigin();
 const DEFAULT_IMAGE = `${BASE_URL}/favico/${SITE_VARIANT === 'full' ? '' : SITE_VARIANT + '/'}og-image.png`;
 
