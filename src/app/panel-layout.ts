@@ -74,6 +74,7 @@ import { t } from '@/services/i18n';
 import { getCurrentTheme } from '@/utils';
 import { trackCriticalBannerAction } from '@/services/analytics';
 import { getSecretState } from '@/services/runtime-config';
+import { IS_OFFICIAL_WORLDMONITOR_HOST } from '@/config/variant';
 import { CustomWidgetPanel } from '@/components/CustomWidgetPanel';
 import { openWidgetChatModal } from '@/components/WidgetChatModal';
 import { isProUser, loadWidgets, saveWidget } from '@/services/widget-store';
@@ -152,7 +153,10 @@ export class PanelLayoutManager implements AppModule {
           <img src="/favico/commohedge_logo.jpg" alt="CommoHedge logo" width="24" height="24" class="site-footer-icon" />
           <span class="logo">CommoHedge Monitor</span><span class="logo-mobile">CommoHedge Monitor</span>${BETA_MODE ? '<span class="beta-badge">BETA</span>' : ''}
           <div class="variant-switcher">${(() => {
-        const local = this.ctx.isDesktopApp || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+        const local = this.ctx.isDesktopApp
+          || location.hostname === 'localhost'
+          || location.hostname === '127.0.0.1'
+          || !IS_OFFICIAL_WORLDMONITOR_HOST;
         const inIframe = window.self !== window.top;
         const vHref = (v: string, prod: string) => local || SITE_VARIANT === v ? '#' : prod;
         const vTarget = (v: string) => !local && SITE_VARIANT !== v && inIframe ? 'target="_blank" rel="noopener"' : '';

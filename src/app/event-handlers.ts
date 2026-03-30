@@ -62,6 +62,7 @@ import { mlWorker } from '@/services/ml-worker';
 import { UnifiedSettings } from '@/components/UnifiedSettings';
 import { t } from '@/services/i18n';
 import { TvModeController } from '@/services/tv-mode';
+import { IS_OFFICIAL_WORLDMONITOR_HOST } from '@/config/variant';
 
 export interface EventHandlerCallbacks {
   updateSearchIndex: () => void;
@@ -426,7 +427,9 @@ export class EventHandlerManager implements AppModule {
     };
     document.addEventListener('keydown', this.boundUndoHandler);
 
-    const isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const isLocalDev = location.hostname === 'localhost'
+      || location.hostname === '127.0.0.1'
+      || !IS_OFFICIAL_WORLDMONITOR_HOST;
     this.ctx.container.querySelectorAll<HTMLAnchorElement>('.variant-option').forEach(link => {
       link.addEventListener('click', (e) => {
         const variant = link.dataset.variant;
@@ -535,7 +538,9 @@ export class EventHandlerManager implements AppModule {
     overlay.addEventListener('click', () => this.closeMobileMenu());
     closeBtn.addEventListener('click', () => this.closeMobileMenu());
 
-    const isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+    const isLocalDev = location.hostname === 'localhost'
+      || location.hostname === '127.0.0.1'
+      || !IS_OFFICIAL_WORLDMONITOR_HOST;
     menu.querySelectorAll<HTMLButtonElement>('.mobile-menu-variant').forEach(btn => {
       btn.addEventListener('click', () => {
         const variant = btn.dataset.variant;
