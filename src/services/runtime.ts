@@ -1,4 +1,5 @@
 import { SITE_VARIANT } from '@/config/variant';
+import { IS_OFFICIAL_WORLDMONITOR_HOST } from '@/config/variant';
 
 const ENV = (() => {
   try {
@@ -138,11 +139,14 @@ export function getConfiguredWebApiBaseUrl(): string {
     return '';
   }
 
-  const hostname = window.location?.hostname ?? '';
-  if (!isWorldMonitorWebHost(hostname)) {
-    return '';
+  // On non-official hosts (forks, Vercel previews, custom domains), default to the
+  // public production API so panels keep working even without cloning backend env/secrets.
+  if (!IS_OFFICIAL_WORLDMONITOR_HOST) {
+    return DEFAULT_WEB_API_URL;
   }
 
+  const hostname = window.location?.hostname ?? '';
+  if (!isWorldMonitorWebHost(hostname)) return '';
   return DEFAULT_WEB_API_URL;
 }
 
